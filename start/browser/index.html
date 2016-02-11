@@ -11,23 +11,42 @@
     <script src="/js/album/album.factory.js" defer></script>
     <script src="/js/player/player.controller.js" defer></script>
     <script src="/js/player/player.factory.js" defer></script>
+    <script src="/js/navbar/navbar.controller.js" defer></script>
   </head>
+
   <body ng-app="juke">
     <div id="main" class="container-fluid">
 
       <div class="col-xs-2">
-        <sidebar>
+        <sidebar ng-controller="NavbarCtrl">
           <img src="juke.svg" class="logo">
           <section>
             <h4 class="playlist-item active">
-              <a href="#">ALBUMS</a>
+              <a href="#" ng-click="viewAlbums()">ALBUMS</a>
             </h4>
           </section>
         </sidebar>
       </div>
 
       <div class="col-xs-10">
-        <div class="album" ng-controller="AlbumCtrl">
+        <div ng-show="showAll" ng-controller="AlbumsCtrl">
+          <h3>Albums</h3>
+          <div class="row" ng-repeat="album in albums">
+            <div class="col-xs-4">
+              <a class="thumbnail" href="#" ng-click="showAlbum(album)">
+                <img ng-src="{{ '/api/albums/' + album._id + '.image' }}">
+                <div class="caption">
+                  <h5>
+                    <span>{{ album.name }}</span>
+                  </h5>
+                  <small>{{ album.songs.length }} songs</small>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div ng-show="showAlbum" class="album" ng-controller="AlbumCtrl">
           <p>
             <h3>{{ album.name }} <small> {{album.totalTime}}</small></h3> 
             <img ng-src="{{ album.imageUrl }}" class="img-thumbnail">

@@ -12,7 +12,10 @@ juke.factory('PlayerFactory', function($rootScope){
   var progress = 0;
 
   // initialize audio player (note this kind of DOM stuff is odd for Angular)
-  audio.addEventListener('ended', obj.next);
+  audio.addEventListener('ended', function() {
+  	playing = false;
+  	obj.next();
+  });
   audio.addEventListener('timeupdate', function () {
     progress = audio.currentTime / audio.duration;
     $rootScope.$digest();
