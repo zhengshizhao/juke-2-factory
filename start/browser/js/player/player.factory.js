@@ -1,6 +1,6 @@
 'use strict';
 
-juke.factory('PlayerFactory', function(){
+juke.factory('PlayerFactory', function($rootScope){
 
   var obj = {};
 
@@ -15,6 +15,7 @@ juke.factory('PlayerFactory', function(){
   audio.addEventListener('ended', obj.next);
   audio.addEventListener('timeupdate', function () {
     progress = audio.currentTime / audio.duration;
+    $rootScope.$digest();
   });
 
   // functionality
@@ -33,10 +34,10 @@ juke.factory('PlayerFactory', function(){
     obj.pause();
     playing = true;
     // resume current song
-    if (song === currentSong) return audio.play();
+    // if (song === currentSong) return audio.play();
     // enable loading new song
     currentSong = song;
-    playlist = songList;
+    if (songList) playlist = songList;
     audio.src = song.audioUrl;
     audio.load();
     audio.play();
