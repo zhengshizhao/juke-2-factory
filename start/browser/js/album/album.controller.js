@@ -22,24 +22,29 @@ juke.controller('AlbumCtrl', function($scope, $http, $rootScope, $log, StatsFact
   $scope.currentSong = PlayerFactory.getCurrentSong;
   $scope.playing  = PlayerFactory.isPlaying
 
-  $scope.$on('showAlbum', function(e, album) {
-    console.log(e, ' album: ', album)
+  $scope.$on('viewSwap', function(e, data) {
+    if (data.type === 'showAlbum') {
+      var album = data.album;
+    // console.log(e, ' album: ', album)
 
-    $scope.album = album;
-    $scope.showAlbum = true;
+      $scope.album = album;
+      $scope.showAlbum = true;
 
-    album.imageUrl = '/api/albums/' + album._id + '.image';
-    album.songs.forEach(function (song, i) {
-      song.audioUrl = '/api/songs/' + song._id + '.audio';
-    });
+      album.imageUrl = '/api/albums/' + album._id + '.image';
+      album.songs.forEach(function (song, i) {
+        song.audioUrl = '/api/songs/' + song._id + '.audio';
+      });
 
-    $http.get('/api/albums/' + $scope.album._id)
-    .then(res => res.data)
-    .then(album => StatsFactory.totalTime(album) )
-    .then(function(totalTime) {
-        $scope.album.totalTime = StatsFactory.timeFormat(totalTime);
-    })
-    .catch($log.error);
+      $http.get('/api/albums/' + $scope.album._id)
+      .then(res => res.data)
+      .then(album => StatsFactory.totalTime(album) )
+      .then(function(totalTime) {
+          $scope.album.totalTime = StatsFactory.timeFormat(totalTime);
+      })
+      .catch($log.error);
+    } else {
+      $scope.showAlbum = false;
+    }
 
   });
 
@@ -55,16 +60,14 @@ juke.controller('AlbumsCtrl', function($scope, $http, $rootScope) {
   });
 
   $scope.showAlbum = function(album) {
-    $rootScope.$broadcast('showAlbum', album);
+    $rootScope.$broadcast('viewSwap', { type: 'showAlbum', album: album });
   }
 
-  $scope.$on('showAllAlbums', function() {
-    $scope.showAll = true;
-  });
-
-  $scope.$on('showAlbum', function() {
-    $scope.showAll = false;
+  $scope.$on('viewSwap', function(e, data) {
+    if (data.type === 'showAllAlbums') $scope.showAll = true;
+    else $scope.showAll = false;
   })
+
 
 });
 

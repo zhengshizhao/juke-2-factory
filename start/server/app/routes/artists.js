@@ -31,6 +31,7 @@ router.get('/:artistId', function (req, res) {
 
 router.get('/:artistId/albums', function (req, res, next) {
   req.artist.getAlbums()
+  .deepPopulate('songs.artists')
   .then(function (albums) {
     res.json(albums);
   })
