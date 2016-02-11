@@ -9,6 +9,13 @@ juke.factory('PlayerFactory', function(){
   var playing = false;
   var playlist = null;
   var currentSong = null;
+  var progress = 0;
+
+  // initialize audio player (note this kind of DOM stuff is odd for Angular)
+  audio.addEventListener('ended', obj.next);
+  audio.addEventListener('timeupdate', function () {
+    progress = audio.currentTime / audio.duration;
+  });
 
   // functionality
   obj.pause = function () {
@@ -61,6 +68,11 @@ juke.factory('PlayerFactory', function(){
 
   obj.next = function() { skip(1); };
   obj.previous = function() { skip(-1); };
+
+  obj.getProgress = function() {
+  	if (!currentSong) return 0;
+  	return progress;
+  }
 
   return obj;
 });
